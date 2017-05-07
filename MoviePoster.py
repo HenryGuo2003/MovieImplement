@@ -3,9 +3,10 @@ import Image
 from glob import glob
 from os.path import splitext
 import cv2
+from sklearn.cluster import KMeans
 
 train_label = []
-trtxtlist = open("./trainset/trainanswer.txt","r")
+trtxtlist = open("../trainset/trainanswer.txt","r")
 for trline in trtxtlist:
     gtlist = []
     intlist = []
@@ -31,7 +32,7 @@ cate_dict = {0:cate_0, 1:cate_1, 2:cate_2, 3:cate_3, 4:cate_4, 5:cate_5, 6:cate_
         10:cate_10, 11:cate_11, 12:cate_12, 13:cate_13, 14:cate_14, 15:cate_15, 16:cate_16, 17:cate_17, 
         18:cate_18, 19:cate_19, 20:cate_20, 21:cate_21, 22:cate_22}
 
-train_list = glob("./trainset/*.[j][p][g]")
+train_list = glob("../trainset/*.[j][p][g]")
 train_list.sort()
 train_count = -1
 for train_jpg in train_list:  #Read training jpg
@@ -39,7 +40,7 @@ for train_jpg in train_list:  #Read training jpg
     try:
         train_image = cv2.imread(train_jpg)
     except:
-        train_image = cv2.imread("./testset/999.jpg") #If error Read 999.jpg
+        train_image = cv2.imread("../testset/999.jpg") #If error Read 999.jpg
         print ("READ ERROR!")
 
     train_image = cv2.resize(train_image, (200,200)) #Resize image to 200*200
@@ -56,4 +57,7 @@ for train_jpg in train_list:  #Read training jpg
         for cate_num in train_label[train_count]:
             cate_dict[cate_num].append(hist_arr)
 
-print (cate_0)
+#print (cate_0)
+cate_0 = np.array(cate_0)
+kmeans = KMeans(n_clusters=1, random_state=0).fit(cate_0)
+print (kmeans.cluster_centers_)
